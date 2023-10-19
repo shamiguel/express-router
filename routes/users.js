@@ -15,12 +15,18 @@ router.get('/:id', async(req, res)=>{
     res.json(user);
 })
 
-router.post('/', async(req, res)=>{
-    const data = req.body
-    //console.log(data)
-    const user = await User.create(data);
-    res.json(user);
-})
+router.post('/',[
+    check("name").not().isEmpty().trim()
+], async(req, res)=>{
+    const error = validationResult(req)
+    if(!error.isEmpty()){
+        res.json({error: error.array()})
+    }else{
+        const data = req.body
+        const user = await User.create(data);
+        res.json(user);
+    }
+});
 
 router.put('/:id', async(req, res)=>{
     const id = req.params.id;

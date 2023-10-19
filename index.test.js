@@ -44,6 +44,20 @@ describe('User Router', ()=>{
         
             expect(response.statusCode).toBe(200)
             expect(response.body.name).toBe("Friend")
+        });
+
+        it("returns an error if a user does not have a name", async()=>{
+            const response = await request(app)
+            .post('/users')
+            .send({
+                "name":""
+            })
+            const errors = JSON.parse(response.text)
+            console.log(JSON.parse(response.text))
+            expect(response.statusCode).toBe(200)
+            expect(errors.error[0].msg).toBe('Invalid value')
+            
+          
         })
     })
 
@@ -107,6 +121,21 @@ describe('Fruit Router', ()=>{
         
             expect(response.statusCode).toBe(200)
             expect(response.body.name).toBe("Mango")
+        })
+
+        it("returns an error if a fruit does not have a color", async()=>{
+            const response = await request(app)
+            .post('/fruits')
+            .send({
+                "name":"Mango",
+                "color": ""
+            })
+            const errors = JSON.parse(response.text)
+            console.log(JSON.parse(response.text))
+            expect(response.statusCode).toBe(200)
+            expect(errors.error[0].msg).toBe('Invalid value')
+            
+          
         })
     })
 
