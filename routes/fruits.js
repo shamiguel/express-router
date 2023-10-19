@@ -1,0 +1,45 @@
+const express = require("express");
+const router = express.Router();
+const { Fruit } = require('../models/index')
+
+const {check, validationResult} = require("express-validator");
+
+router.get('/', async(req, res)=>{
+    const fruits = await Fruit.findAll();
+    res.json(fruits);
+})
+
+router.get('/:id', async(req, res)=>{
+    const id = req.params.id
+    const fruit = await Fruit.findByPk(id);
+    res.json(fruit);
+})
+
+router.post('/', async(req, res)=>{
+    const data = req.body
+    //console.log(data)
+    const fruit = await Fruit.create(data);
+    res.json(fruit);
+})
+
+router.put('/:id', async(req, res)=>{
+    const id = req.params.id;
+    //console.log(req.body)
+    const fruit = await Fruit.findByPk(id);
+    const data = req.body;
+    //console.log(data)
+    const updatedFruit = await fruit.update(data);
+    res.json(updatedFruit);
+})
+
+router.delete('/:id', async(req, res)=>{
+    const id = req.params.id;
+    const fruit = await Fruit.findByPk(id);
+    const deleted = await fruit.destroy();
+
+    res.json(deleted);
+})
+
+
+
+module.exports = router;
