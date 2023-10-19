@@ -10,6 +10,10 @@ beforeAll(async()=>{
     await User.bulkCreate(seedUsers);
 })
 
+afterAll(async()=>{
+    await db.sync({force:true})
+})
+
 describe('User Router', ()=>{
     describe('/GET', ()=>{
         it('succesfully gets users', async()=>{
@@ -67,6 +71,69 @@ describe('User Router', ()=>{
 
             expect(response.statusCode).toBe(200)
             expect(JSON.stringify(response.body)).toBe(JSON.stringify(condemnedUser))
+            expect(ghost).toBe(null)
+        })
+    })
+})
+
+describe('Fruit Router', ()=>{
+    describe('/GET', ()=>{
+        it('succesfully gets fruit', async()=>{
+            const fruits = await Fruit.findAll();
+            const response = await request(app).get('/fruits')
+        
+            expect(response.statusCode).toBe(200)
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify(fruits))
+        })
+
+        it('succesfully gets a fruit', async()=>{
+            const fruit = await Fruit.findByPk(1);
+            const response = await request(app).get('/fruits/1')
+        
+            expect(response.statusCode).toBe(200)
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify(fruit))
+        })
+    })
+
+    describe('./POST', ()=>{
+        it('succesfully posts fruits', async()=>{
+            
+            const response = await request(app)
+            .post('/fruits')
+            .send({
+                "name":"Mango",
+                "color":"yellow/orange/green"
+            })
+        
+            expect(response.statusCode).toBe(200)
+            expect(response.body.name).toBe("Mango")
+        })
+    })
+
+    describe('./PUT', ()=>{
+        it('succesfully updates a fruit', async()=>{
+            
+            const response = await request(app)
+            .put('/fruits/1')
+            .send({
+                "name":"Guava",
+                "color":"green"
+            })
+            const updatedFruit = await Fruit.findByPk(1)
+            expect(response.statusCode).toBe(200)
+            expect(updatedFruit.name).toBe("Guava")
+        })
+    })
+
+    describe('./DELETE', ()=>{
+        it('succesfully deletes a fruit', async()=>{
+            const condemnedFruit = await Fruit.findByPk(1)
+            const response = await request(app)
+            .delete('/fruits/1')
+            const ghost = await Fruit.findByPk(1);
+
+            expect(response.statusCode).toBe(200)
+            expect(JSON.stringify(response.body)).toBe(JSON.stringify(condemnedFruit))
             expect(ghost).toBe(null)
         })
     })
